@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { promisify } = require("util");
 const catchAsync = require("../utils/catchAsync");
+const Email = require("../utils/Email");
 
 const sendToken = (user, statusCode, res) => {
   const token = createSendToken(user._id);
@@ -27,6 +28,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
+  const obj = new Email(user, "http://localhost:3000");
   sendToken(user, 201, res);
 });
 
