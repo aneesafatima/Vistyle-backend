@@ -35,11 +35,34 @@ exports.signUp = catchAsync(async (req, res, next) => {
 //TO LOGIN A USER
 exports.logIn = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password)
-    return next(new ErrorHandler("Please enter email or password", 401));
+  // if (!email || !password)
+  //   return next(new ErrorHandler("Please enter email or password", 401));
+  // const user = await User.findOne({ email }).select("+password");
+  // if (!user || !(await user.comparePasswords(password, user.password)))
+  //   return next(new ErrorHandler("Invalid email or password", 401));
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide an email",
+    });
+  }
+
+  if (!password) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide a password",
+    });
+  }
+
   const user = await User.findOne({ email }).select("+password");
+
   if (!user || !(await user.comparePasswords(password, user.password)))
-    return next(new ErrorHandler("Invalid email or password", 401));
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+
   sendToken(user, 200, res);
 });
 
@@ -70,7 +93,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 exports.logOut = (req, res) => {
-//write logic for react native
+  //write logic for react native
   res.status(200).json({
     status: "success",
   });

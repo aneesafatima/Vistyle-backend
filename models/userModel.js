@@ -1,7 +1,7 @@
 
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -40,7 +40,7 @@ const UserSchema = new mongoose.Schema({
 //To securely store the password in database
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 12);
+    this.password = await bcryptjs.hash(this.password, 12);
     //hashing the password to secure
     this.passwordConfirm = undefined;
   }
@@ -59,7 +59,7 @@ UserSchema.methods.comparePasswords = async function (
   userPassword,
   hashedPassword
 ) {
-  return await bcrypt.compare(userPassword, hashedPassword);
+  return await bcryptjs.compare(userPassword, hashedPassword);
 };
 
 //To check if the password was changed after the token was issued
