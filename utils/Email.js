@@ -1,19 +1,16 @@
 const nodemailer = require('nodemailer');
-const pug = require('pug');
-const htmlToText = require('html-to-text');
 
 module.exports = class Email {
   constructor(user) {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
-    // this.url = url;
     this.from = `Aneesa <${process.env.EMAIL_FROM}>`;
   }
 
   newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
-      return transport = nodemailer.createTransport({
+    if (process.env.NODE_ENV === 'development') {
+      // Mailtrap
+      return  nodemailer.createTransport({
         host: "sandbox.smtp.mailtrap.io",
         port: 2525,
         auth: {
@@ -43,7 +40,6 @@ module.exports = class Email {
       to: this.to,
       subject,
     //   html,
-    //   text: htmlToText.fromString(html)
     };
 
     // 3) Create a transport and send email
@@ -54,9 +50,9 @@ module.exports = class Email {
     await this.send('Welcome to the Color Theory App!');
   }
 
-//   async sendPasswordReset() {
-//     await this.send(
-//       'Your password reset token (valid for only 10 minutes)'
-//     );
-//   }
+  async sendPasswordResetOTP(otp) {
+    await this.send(
+      `Your password reset OTP is ${otp}. It is valid for only 5 minutes.`
+    );
+  }
 };

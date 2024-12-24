@@ -63,7 +63,7 @@ app.use("*", (req, res) => {
 app.use("/", (req, res) => {
   res.send("Hello World");
 });
-// app.use(errorController); //LEFT TO BE CREATED 
+// app.use(errorController); //LEFT TO BE CREATED
 
 mongoose
   .connect(DB, {})

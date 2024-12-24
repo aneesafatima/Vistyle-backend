@@ -1,7 +1,7 @@
-
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
+const speakeasy = require("speakeasy");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -35,7 +35,11 @@ const UserSchema = new mongoose.Schema({
     default: "default-user",
   },
   passwordChangedAt: Date,
-  active: Boolean
+  active: Boolean,
+  otpsecret: {
+    type: String,
+    select: false,
+  },
 });
 //To securely store the password in database
 UserSchema.pre("save", async function (next) {
@@ -43,6 +47,10 @@ UserSchema.pre("save", async function (next) {
     this.password = await bcryptjs.hash(this.password, 12);
     //hashing the password to secure
     this.passwordConfirm = undefined;
+    if (this.isNew) {
+      // Generate a unique secret for each user
+      this.otpsecret = speakeasy.generateSecret({ length: 20 }).base32;
+    }
   }
   next();
 });

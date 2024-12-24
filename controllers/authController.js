@@ -4,6 +4,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const { promisify } = require("util");
 const catchAsync = require("../utils/catchAsync");
 const Email = require("../utils/Email");
+const speakeasy = require("speakeasy");
 
 const sendToken = (user, statusCode, res) => {
   const token = createSendToken(user._id);
@@ -28,7 +29,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  const obj = new Email(user, "http://localhost:3000");
+  const obj = new Email(user);
+  obj.sendWelcome(user);
   sendToken(user, 201, res);
 });
 
@@ -97,4 +99,70 @@ exports.logOut = (req, res) => {
   res.status(200).json({
     status: "success",
   });
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email)
+    return next(
+      new ErrorHandler(
+        "No email provided. Please Enter your account email.",
+        400
+      )
+    );
+  const user = await User.findOne({ email }).select("+otpsecret");
+  if (!user)
+    return next(new ErrorHandler("There is no User with this ID", 400));
+  console.log(user.otpsecret);
+  const otp = speakeasy.totp({
+    secret: user.otpsecret,
+    encoding: "base32",
+    digits: 6,
+    step: 300, // 5 minutes validity
+  });
+  await new Email(user).sendPasswordResetOTP(otp);
+  res.status(200).json({
+    status: "success",
+    message: "OTP sent to your email",
+  });
+};
+
+exports.checkOTP = async (req, res, next) => {
+  const { otp, email } = req.body;
+  const user = await User.findOne({ email }).select("+otpsecret");
+  console.log(user.otpsecret);
+  const result = speakeasy.totp.verify({
+    secret: user.otpsecret,
+    encoding: "base32",
+    token: otp,
+    digits: 6,
+    step: 300,
+  });
+  console.log(result);
+  if (result) {
+    req.user = user;
+    return res.status(200).json({
+      status: "success",
+      message: "OTP is correct",
+    });
+  }
+  res.status(400).json({
+    status: "failed",
+    message: "OTP is incorrect",
+  });
+};
+
+exports.resetPassword = async (req, res, next) => {
+  const { password, passwordConfirm, email } = req.body;
+  if (!password || !passwordConfirm)
+    return next(
+      new ErrorHandler("Please enter password and confirm password", 400)
+    );
+  if (password !== passwordConfirm)
+    return next(new ErrorHandler("Passwords do not match", 400));
+  const user = await User.findOne({ email }).select("+password");
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
+  sendToken(user, 200, res);
 };
