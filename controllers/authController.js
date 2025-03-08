@@ -55,7 +55,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
 //TO PROTECT ROUTES
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log("in protect")
+  console.log("in protect");
   let token;
   const { authorization } = req.headers;
   if (authorization && authorization.startsWith("B"))

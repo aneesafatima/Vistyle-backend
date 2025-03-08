@@ -9,7 +9,6 @@ const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
 const path = require("path");
-const cors = require("cors");
 dotenv.config({ path: "./.env" });
 
 const DB = process.env.DB_CONNECTION_STRING.replace(
@@ -38,15 +37,12 @@ process.on("unhandledRejection", (err) => {
 
 // Middleware setup
 // Set Security HTTP Headers using Helmet
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }, // CORP (Cross-Origin Resource Policy):
-    // Allows cross-origin access for images, videos, etc.
-  })
-);
-
-app.use(cors());
-
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: { policy: "cross-origin" }, // CORP (Cross-Origin Resource Policy):
+//     // Allows cross-origin access for images, videos, etc.
+//   })
+// );
 
 // Data Sanitization against NoSQL Injection attacks
 app.use(mongoSanitize());
@@ -56,7 +52,7 @@ app.use(hpp());
 
 app.use(express.json());
 
-// app.use(express.urlencoded({ extended: true })); 
+// app.use(express.urlencoded({ extended: true }));
 app.use("/", (req, res) => {
   res.status(200).json({
     message: "hello world",
