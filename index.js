@@ -9,6 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
 const path = require("path");
+const cors = require("cors");
 dotenv.config({ path: "./.env" });
 
 const DB = process.env.DB_CONNECTION_STRING.replace(
@@ -43,6 +44,9 @@ app.use(
     // Allows cross-origin access for images, videos, etc.
   })
 );
+
+app.use(cors());
+
 
 // Data Sanitization against NoSQL Injection attacks
 app.use(mongoSanitize());
