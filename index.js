@@ -52,17 +52,19 @@ app.use(hpp());
 
 app.use(express.json());
 
-// app.use(express.urlencoded({ extended: true })); NOT NEEDED NOW
-
+// app.use(express.urlencoded({ extended: true })); 
+app.use("/", (req, res) => {
+  res.status(200).json({
+    message: "hello world",
+  });
+});
 app.use("/api/v1/auth", authRouter);
 app.use("*", (req, res) => {
   res.status(404).json({
     message: "Not Found",
   });
 });
-app.use("/", (req, res) => {
-  res.send("Hello World");
-});
+
 // app.use(errorController); //LEFT TO BE CREATED
 
 mongoose

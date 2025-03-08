@@ -23,42 +23,27 @@ const createSendToken = (id) => {
 
 //TO SIGN UP A USER
 exports.signUp = catchAsync(async (req, res, next) => {
+  console.log("signup");
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  const obj = new Email(user);
-  obj.sendWelcome(user);
+  // const obj = new Email(user);
+  // obj.sendWelcome(user);
+  //SEND RELEVANT USER DATA
   sendToken(user, 201, res);
 });
 
 //TO LOGIN A USER
 exports.logIn = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  // if (!email || !password)
-  //   return next(new ErrorHandler("Please enter email or password", 401));
-  // const user = await User.findOne({ email }).select("+password");
-  // if (!user || !(await user.comparePasswords(password, user.password)))
-  //   return next(new ErrorHandler("Invalid email or password", 401));
-
-  if (!email) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide an email",
-    });
-  }
-
-  if (!password) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide a password",
-    });
-  }
-
+  if (!email || !password)
+    return next(new ErrorHandler("Please enter email or password", 401));
   const user = await User.findOne({ email }).select("+password");
-
+  if (!user || !(await user.comparePasswords(password, user.password)))
+    return next(new ErrorHandler("Invalid email or password", 401));
   if (!user || !(await user.comparePasswords(password, user.password)))
     return res.status(404).json({
       success: false,
@@ -70,6 +55,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
 //TO PROTECT ROUTES
 exports.protect = catchAsync(async (req, res, next) => {
+  console.log("in protect")
   let token;
   const { authorization } = req.headers;
   if (authorization && authorization.startsWith("B"))
@@ -89,9 +75,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!currentUser)
     return next(new ErrorHandler("There is no user belonging to this Id", 400));
 
-  req.user = currentUser;
-
-  next();
+  res.status(200).json({
+    status: "success",
+  });
 });
 
 exports.logOut = (req, res) => {
