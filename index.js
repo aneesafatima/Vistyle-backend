@@ -72,9 +72,13 @@ mongoose
   .then(() => {
     console.log("Mongodb connected");
 
-    server.listen(5000, () => {
-      console.log(`Server is listening on port 5000`);
-    });
+
+    if (process.env.NODE_ENV === "development") {
+      const server = http.createServer(app);
+      server.listen(process.env.PORT, () => {
+        console.log(`Server is listening on port ${process.env.PORT}`);
+      });
+    }
   })
   .catch((err) => {
     console.error("DATABASE CONNECTION ERROR:", err);
