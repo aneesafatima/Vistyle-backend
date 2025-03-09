@@ -10,6 +10,7 @@ const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
 const path = require("path");
 dotenv.config({ path: "./.env" });
+const serverless = require("serverless-http"); //for serverless deployment
 
 const DB = process.env.DB_CONNECTION_STRING.replace(
   "<password>",
@@ -86,3 +87,4 @@ mongoose
   });
 
 module.exports = app;
+module.exports.handler = serverless(app);
