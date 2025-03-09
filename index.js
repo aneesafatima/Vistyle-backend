@@ -54,7 +54,7 @@ app.use(hpp());
 app.use(express.json());
 
 // app.use(express.urlencoded({ extended: true }));
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({
     message: "hello world",
   });
