@@ -9,16 +9,16 @@ const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
 const path = require("path");
+const cors = require("cors");
 dotenv.config({ path: "./.env" });
-
 const DB = process.env.DB_CONNECTION_STRING.replace(
   "<password>",
   process.env.DB_PASSWORD
 );
 const app = express(); //app is an instance of express
-const server = http.createServer(app);
-//ERROR HANDLING
+app.use(cors());
 
+//ERROR HANDLING
 // This will catch any uncaught exceptions from anywhere in your app
 process.on("uncaughtException", (err) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
