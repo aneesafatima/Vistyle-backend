@@ -11,7 +11,6 @@ const hpp = require("hpp");
 const path = require("path");
 dotenv.config({ path: "./.env" });
 
-
 const DB = process.env.DB_CONNECTION_STRING.replace(
   "<password>",
   process.env.DB_PASSWORD
@@ -54,12 +53,13 @@ app.use(hpp());
 app.use(express.json());
 
 // app.use(express.urlencoded({ extended: true }));
+app.use("/api/v1/auth", authRouter);
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "hello world",
   });
 });
-app.use("/api/v1/auth", authRouter);
+
 app.use("*", (req, res) => {
   res.status(404).json({
     message: "Not Found",
@@ -72,7 +72,6 @@ mongoose
   .connect(DB, {})
   .then(() => {
     console.log("Mongodb connected");
-
 
     if (process.env.NODE_ENV === "development") {
       const server = http.createServer(app);
