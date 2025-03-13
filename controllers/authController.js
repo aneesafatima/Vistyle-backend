@@ -106,6 +106,7 @@ exports.forgotPassword = async (req, res, next) => {
     digits: 6,
     step: 300, // 5 minutes validity
   });
+  console.log("OTP generated: ", otp);
   await new Email(user).sendPasswordResetOTP(otp);
   res.status(200).json({
     status: "success",
