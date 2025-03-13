@@ -89,6 +89,7 @@ exports.logOut = (req, res) => {
 
 exports.forgotPassword = async (req, res, next) => {
   const { email } = req.body;
+  console.log(email);
   if (!email)
     return next(
       new ErrorHandler(
@@ -98,15 +99,13 @@ exports.forgotPassword = async (req, res, next) => {
     );
   const user = await User.findOne({ email }).select("+otpsecret");
   if (!user)
-    return next(new ErrorHandler("There is no User with this ID", 400));
-  console.log("otp-secret", user.otpsecret);
+    return next(new ErrorHandler("There is no User with this ID", 404));
   const otp = speakeasy.totp({
     secret: user.otpsecret,
     encoding: "base32",
     digits: 6,
     step: 300, // 5 minutes validity
   });
-  console.log("OTP generated: ", otp);
   await new Email(user).sendPasswordResetOTP(otp);
   res.status(200).json({
     status: "success",

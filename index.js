@@ -8,7 +8,6 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
-const path = require("path");
 const cors = require("cors");
 dotenv.config({ path: "./.env" });
 const DB = process.env.DB_CONNECTION_STRING.replace(
