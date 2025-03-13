@@ -99,7 +99,7 @@ exports.forgotPassword = async (req, res, next) => {
   const user = await User.findOne({ email }).select("+otpsecret");
   if (!user)
     return next(new ErrorHandler("There is no User with this ID", 400));
-  console.log(user.otpsecret);
+  console.log("otp-secret", user.otpsecret);
   const otp = speakeasy.totp({
     secret: user.otpsecret,
     encoding: "base32",
