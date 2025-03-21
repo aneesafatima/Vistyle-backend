@@ -10,8 +10,6 @@ module.exports = class Email {
   newTransport() {
     // if (process.env.NODE_ENV === 'development') {
     // Mailtrap
-    console.log("user", process.env.MAILTRAP_USER);
-    console.log("pass", process.env.MAILTRAP_PASS);
     return nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
@@ -45,7 +43,6 @@ module.exports = class Email {
     };
 
     // 3) Create a transport and send email
-    console.log("sending mail")
     await this.newTransport().sendMail(mailOptions);
   }
 
@@ -54,7 +51,6 @@ module.exports = class Email {
   }
 
   async sendPasswordResetOTP(otp) {
-    console.log("sending otp");
     await this.send(
       `Your password reset OTP is ${otp}. It is valid for only 5 minutes.`
     );
