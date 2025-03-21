@@ -9,6 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
 const hpp = require("hpp");
 const cors = require("cors");
+const ErrorController = require("./controllers/ErrorController");
 dotenv.config({ path: "./.env" });
 const DB = process.env.DB_CONNECTION_STRING.replace(
   "<password>",
@@ -50,7 +51,6 @@ app.use(mongoSanitize());
 // Prevent HTTP Parameter Pollution
 app.use(hpp());
 
-
 // app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
 app.get("/", (req, res) => {
@@ -65,7 +65,7 @@ app.use("*", (req, res) => {
   });
 });
 
-// app.use(errorController); //LEFT TO BE CREATED
+app.use(ErrorController); //LEFT TO BE CREATED
 
 mongoose
   .connect(DB, {})

@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
 const speakeasy = require("speakeasy");
-
+//limit the things returned from the database
+// remove pasword and otpsecret from the response
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
