@@ -16,6 +16,7 @@ const DB = process.env.DB_CONNECTION_STRING.replace(
 );
 const app = express(); //app is an instance of express
 app.use(cors());
+app.use(express.json());
 
 //ERROR HANDLING
 // This will catch any uncaught exceptions from anywhere in your app
@@ -49,7 +50,6 @@ app.use(mongoSanitize());
 // Prevent HTTP Parameter Pollution
 app.use(hpp());
 
-app.use(express.json());
 
 // app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);

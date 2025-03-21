@@ -23,15 +23,14 @@ const createSendToken = (id) => {
 
 //TO SIGN UP A USER
 exports.signUp = catchAsync(async (req, res, next) => {
-  console.log("signup");
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  // const obj = new Email(user);
-  // obj.sendWelcome(user);
+  const obj = new Email(user);
+  obj.sendWelcome(user);
   //SEND RELEVANT USER DATA
   sendToken(user, 201, res);
 });
@@ -55,7 +54,6 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
 //TO PROTECT ROUTES
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log("in protect");
   let token;
   const { authorization } = req.headers;
   if (authorization && authorization.startsWith("B"))
@@ -89,7 +87,6 @@ exports.logOut = (req, res) => {
 
 exports.forgotPassword = async (req, res, next) => {
   const { email } = req.body;
-  console.log(email);
   if (!email)
     return next(
       new ErrorHandler(
@@ -116,7 +113,6 @@ exports.forgotPassword = async (req, res, next) => {
 exports.checkOTP = async (req, res, next) => {
   const { otp, email } = req.body;
   const user = await User.findOne({ email }).select("+otpsecret");
-  console.log(user.otpsecret);
   const result = speakeasy.totp.verify({
     secret: user.otpsecret,
     encoding: "base32",
@@ -124,7 +120,6 @@ exports.checkOTP = async (req, res, next) => {
     digits: 6,
     step: 300,
   });
-  console.log(result);
   if (result) {
     req.user = user;
     return res.status(200).json({
@@ -139,6 +134,7 @@ exports.checkOTP = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
+  console.log("In reset password")
   const { password, passwordConfirm, email } = req.body;
   if (!password || !passwordConfirm)
     return next(
