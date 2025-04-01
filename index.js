@@ -7,6 +7,7 @@ const http = require("http");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const authRouter = require("./routes/authRoutes");
+const productRouter = require("./routes/productRoutes");
 const hpp = require("hpp");
 const cors = require("cors");
 const ErrorController = require("./controllers/ErrorController");
@@ -53,6 +54,7 @@ app.use(hpp());
 
 // app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/products", productRouter);
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "hello world",
