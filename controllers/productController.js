@@ -9,7 +9,7 @@ exports.getAllProducts = async (req, res, next) => {
   }
   if (store == "hm") {
     const response = await axios.get(
-      "https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/list",
+      process.env.HM_API_URL,
       {
         params: {
           country: "in", //change it later to an optional country
