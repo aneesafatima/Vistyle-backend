@@ -34,18 +34,19 @@ const handleJWTExpiredError = () =>
   new ErrorHandler("Your token has expired! Please log in again.", 401);
 
 module.exports = (err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+  // err.statusCode = err.statusCode || 500;
+  // err.status = err.status || "error";
 
-  if (process.env.NODE_ENV === "production") {
-    let error = { ...err };
-    error.message = err.message;
-    if (err.name === "ValidationError") {
-      error = validationError(err);
-    }
-    if (err.code === 11000) error = duplicateErrors();
-    if (err.name === "JsonWebTokenError") error = handleJWTExpiredError();
+  // if (process.env.NODE_ENV === "production") {
+  //   let error = { ...err };
+  //   error.message = err.message;
+  //   if (err.name === "ValidationError") {
+  //     error = validationError(err);
+  //   }
+  //   if (err.code === 11000) error = duplicateErrors();
+  //   if (err.name === "JsonWebTokenError") error = handleJWTExpiredError();
 
-    errorProd(error, res);
-  } else if (process.env.NODE_ENV === "development") errorDev(err, res);
+  //   errorProd(error, res);
+  // } else if (process.env.NODE_ENV === "development")
+   errorDev(err, res);
 };
