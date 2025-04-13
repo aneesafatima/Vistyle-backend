@@ -45,6 +45,6 @@ exports.processImageWithHuggingFace = async (imgURL) => {
     return maskedItems;
   } catch (error) {
     console.error("Error processing image:", error);
-    throw new Error("Failed to process image with Hugging Face model."); // check for error middleware in express
+    throw new Error(error.message); // check for error middleware in express
   }
 };
