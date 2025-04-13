@@ -1,4 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
+const ErrorHandler = require("../utils/ErrorHandler");
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
@@ -21,10 +22,6 @@ exports.createItemMask = catchAsync(async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Error processing image:", error);
-    res.status(500).json({
-      status: "fail",
-      error,
-    });
+    next(new ErrorHandler(error.message, 500));
   }
 });
