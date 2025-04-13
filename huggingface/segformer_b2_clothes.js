@@ -11,11 +11,11 @@ exports.processImageWithHuggingFace = async (imgURL) => {
       {
         headers: {
           Authorization: `Bearer ${process.env.HUGGING_FACE_TOKEN}`,
-          "Content-Type": "image/jpeg",
+          "Content-Type": "application/json",
         },
       }
     );
-    const result = await response.json();
+    const result = response.data;
     const clothingTypes = [
       "T-shirt",
       "Shirt",
