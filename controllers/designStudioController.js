@@ -22,6 +22,6 @@ exports.createItemMask = catchAsync(async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(new ErrorHandler(error.message, 500));
+    next(new ErrorHandler(error, 500));
   }
 });
