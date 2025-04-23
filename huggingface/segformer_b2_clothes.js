@@ -38,7 +38,9 @@ exports.processImageWithHuggingFace = async (imgURL) => {
         return clothingTypes.includes(item.label);
       })
       .map((item) => {
-        return item.mask;
+        return {mask:item.mask,
+          label: item.label,
+        };
       });
     return maskedItems;
   } catch (error) {
