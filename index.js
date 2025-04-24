@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
 const http = require("http");
 // const bodyParser = require("body-parser");
 const helmet = require("helmet");
@@ -11,7 +12,6 @@ const designStudioRouter = require("./routes/designStudioRoutes");
 const hpp = require("hpp");
 const cors = require("cors");
 const ErrorController = require("./controllers/ErrorController");
-dotenv.config({ path: "./.env" });
 const DB = process.env.DB_CONNECTION_STRING.replace(
   "<password>",
   process.env.DB_PASSWORD
@@ -55,7 +55,7 @@ app.use(hpp());
 // app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/products", productRouter);
-app.use("/api/v1/design-studio", designStudioRouter); 
+app.use("/api/v1/design-studio", designStudioRouter);
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "hello world",
