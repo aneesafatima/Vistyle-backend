@@ -1,12 +1,8 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { removeBackground } = require("@imgly/background-removal-node");
-const cloudinary = require("cloudinary").v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_API_CLOUDNAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const { uploadImage } = require("../helpers/imageProcessing");
+
 
 const {
   processImageWithHuggingFace,
@@ -43,23 +39,3 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     imgUrl,
   });
 });
-
-const uploadImage = async (base64) => {
-  try {
-    const result = await cloudinary.uploader.upload(base64, {
-      public_id: "test-img",
-      folder: "vistyl",
-      transformation: [
-        {
-          width: 1000,
-          crop: "limit",
-          quality: "auto:best",
-          dpr: "auto",
-        },
-      ],
-    });
-    return result.secure_url;
-  } catch (err) {
-    throw new Error("Error uploading image");
-  }
-};
