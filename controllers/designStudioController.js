@@ -24,7 +24,7 @@ exports.createItemMask = catchAsync(async (req, res, next) => {
 });
 
 exports.removeBg = catchAsync(async (req, res, next) => {
-  const url = req.query.imgUR;
+  const url = req.query.imgURL;
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
