@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema({
       },
       message: "Passwords do not match",
     },
+    select: false,
   },
   photo: {
     type: String,
@@ -41,6 +42,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     select: false,
   },
+  items: [{
+   type: String
+  }],
 });
 //To securely store the password in database
 UserSchema.pre("save", async function (next) {
