@@ -2,11 +2,11 @@ const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { removeBackground } = require("@imgly/background-removal-node");
 const { uploadImage } = require("../helpers/imageProcessing");
-
-
+const { resizeImage } = require("../helpers/imageProcessing");
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
+
 exports.createItemMask = catchAsync(async (req, res, next) => {
   const imgURL = req.query.imgURL;
   try {
@@ -28,7 +28,16 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  const result = await removeBackground(url);
+  const resizedImg = await resizeImage(url, 600);
+  if (!resizedImg) {
+    return next(new ErrorHandler("Error resizing image", 500));
+  }
+  const arrayBuffer = resizedImg.buffer.slice(
+    resizedImg.byteOffset,
+    resizedImg.byteOffset + resizedImg.byteLength
+  );
+  const blob = new Blob([arrayBuffer], { type: "image/png" });
+  const result = await removeBackground(blob);
   if (!result) {
     return next(new ErrorHandler("Error removing background", 500));
   }
