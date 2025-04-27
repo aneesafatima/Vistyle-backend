@@ -34,9 +34,9 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   }
   const arrayBuffer = resizedImg.buffer.slice(
     resizedImg.byteOffset,
-    resizedImg.byteOffset + resizedImg.byteLength
+    resizedImg.byteOffset + resizedImg.length
   );
-  const blob = new Blob([arrayBuffer], { type: "image/png" });
+  const blob = new Blob([resizedImg], { type: "image/png" });
   const result = await removeBackground(blob);
   if (!result) {
     return next(new ErrorHandler("Error removing background", 500));
