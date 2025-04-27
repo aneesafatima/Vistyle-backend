@@ -1,4 +1,3 @@
-const { Jimp } = require("jimp");
 const cloudinary = require("cloudinary").v2;
 const axios = require("axios");
 const sharp = require("sharp");
