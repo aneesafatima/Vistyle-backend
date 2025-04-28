@@ -28,7 +28,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  const resizedImg = await resizeImage(url, 600);
+  const resizedImg = await resizeImage(url, 200);
   if (!resizedImg) {
     return next(new ErrorHandler("Error resizing image", 500));
   }
