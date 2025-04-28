@@ -7,6 +7,18 @@ const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
 
+const config = {
+  debug: true, // enable or disable useful console.log outputs
+  device: "cpu", // choose the execution device. gpu will use webgpu if available
+  proxyToWorker: true, // Whether to proxy the calculations to a web worker. (Default true)
+  model: "medium", // The model to use. (Default "isnet_fp16")
+  output: {
+    format: "image/png", // The output format. (Default "image/png")
+    quality: 1, // The quality. (Default: 0.8)
+    type: "foreground", // The output type. 'foreground' | 'background' | 'mask' (Default "foreground")
+  },
+};
+
 exports.createItemMask = catchAsync(async (req, res, next) => {
   const imgURL = req.query.imgURL;
   try {
@@ -33,7 +45,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("Error resizing image", 500));
   }
   const blob = new Blob([resizedImg], { type: "image/png" });
-  const result = await removeBackground(blob);
+  const result = await removeBackground(blob, config);
   if (!result) {
     return next(new ErrorHandler("Error removing background", 500));
   }
