@@ -6,17 +6,9 @@ exports.resizeImage = async function (image, width) {
   console.log("Image type:", typeof image);
   try {
     console.log("Resizing image to width:", width);
-    // const img = await Jimp.read(image); // Read the image from the URL
-    // img.resize({
-    //   w: width,
-    //   h: Jimp.AUTO, // Maintain aspect ratio
-    // }); // Resize to width, maintaining aspect ratio
-    // const resizedImage = await img.getBuffer("image/png");
     const response = await axios.get(image, { responseType: "arraybuffer" });
-    const imageBuffer = Buffer.from(response.data);
-    const resizedImage = await sharp(imageBuffer).resize(width).toBuffer();
-    console.log("Image resized successfully:");
-    return resizedImage;
+    // const imageBuffer = Buffer.from(response.data);
+    return await sharp(response.data).resize(width).toBuffer();
   } catch (err) {
     console.error("Error resizing image:", err);
     throw err;
