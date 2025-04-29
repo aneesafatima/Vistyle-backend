@@ -4,87 +4,88 @@ const bcryptjs = require("bcryptjs");
 const speakeasy = require("speakeasy");
 //limit the things returned from the database
 // remove pasword and otpsecret from the response
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "A user must have a name"],
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, "A user must have an email"],
-    validate: [validator.isEmail, "Please provide a valid email"],
-  },
-  password: {
-    type: String,
-    required: [true, "A user must have a password"],
-    minLength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "A user must confirm their password"],
-    validate: {
-      validator: function (value) {
-        return value === this.password;
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "A user must have a name"],
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: [true, "A user must have an email"],
+      validate: [validator.isEmail, "Please provide a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "A user must have a password"],
+      minLength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "A user must confirm their password"],
+      validate: {
+        validator: function (value) {
+          return value === this.password;
+        },
+        message: "Passwords do not match",
       },
-      message: "Passwords do not match",
+      select: false,
     },
-    select: false,
-  },
-  photo: {
-    type: String,
-    default: "default-user",
-  },
-  passwordChangedAt: Date,
-  active: Boolean,
-  otpsecret: {
-    type: String,
-    select: false,
-  },
-  items: [
-    {
+    photo: {
       type: String,
+      default: "default-user",
     },
-  ],
-  interests: [
-    {
+    passwordChangedAt: Date,
+    active: Boolean,
+    otpsecret: {
       type: String,
+      select: false,
     },
-  ],
-  designHouse: {
-    type: String,
-    enum: [
-      "The Dreamer",
-      "The Rebel",
-      "The Minimalist",
-      "The Iconic",
-      "The Trendsetter",
-      "The Vintage Soul",
+    items: [
+      {
+        type: String,
+      },
     ],
-    required: [true, "A user must have a design house"],
-  },
-  interest: [
-    {
+    interests: [
+      {
+        type: String,
+      },
+    ],
+    designHouse: {
       type: String,
       enum: [
-        "Casual",
-        "Formal",
-        "Streetwear",
-        "Athleisure",
-        "Bohemian",
-        "Vintage",
-        "Gothic",
-        "Preppy",
-        "Punk",
-        "Minimalist",
-        "Maximalist",
-        "Artistic",
-        "Eclectic",
-        "Androgynous",
-        "Romantic",
+        "The Dreamer",
+        "The Rebel",
+        "The Minimalist",
+        "The Iconic",
+        "The Trendsetter",
+        "The Vintage Soul",
+      ],
+      required: [true, "A user must have a design house"],
+    },
+    interests: {
+      type: [String],
+      enum: [
+        "casual",
+        "formal",
+        "streetwear",
+        "athleisure",
+        "bohemian",
+        "vintage",
+        "gothic",
+        "preppy",
+        "punk",
+        "minimalist",
+        "maximalist",
+        "artistic",
+        "eclectic",
+        "androgynous",
+        "romantic",
         "Y2K",
-        "Grunge",
+        "grunge",
+        "chic",
       ],
       validate: {
         validator: function (v) {
@@ -93,8 +94,12 @@ const UserSchema = new mongoose.Schema({
         message: "You must select at least 5 styling interests.",
       },
     },
-  ],
-});
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 //To securely store the password in database
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
