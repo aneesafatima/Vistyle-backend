@@ -42,9 +42,58 @@ const UserSchema = new mongoose.Schema({
     type: String,
     select: false,
   },
-  items: [{
-   type: String
-  }],
+  items: [
+    {
+      type: String,
+    },
+  ],
+  interests: [
+    {
+      type: String,
+    },
+  ],
+  designHouse: {
+    type: String,
+    enum: [
+      "The Dreamer",
+      "The Rebel",
+      "The Minimalist",
+      "The Iconic",
+      "The Trendsetter",
+      "The Vintage Soul",
+    ],
+    required: [true, "A user must have a design house"],
+  },
+  interest: [
+    {
+      type: String,
+      enum: [
+        "Casual",
+        "Formal",
+        "Streetwear",
+        "Athleisure",
+        "Bohemian",
+        "Vintage",
+        "Gothic",
+        "Preppy",
+        "Punk",
+        "Minimalist",
+        "Maximalist",
+        "Artistic",
+        "Eclectic",
+        "Androgynous",
+        "Romantic",
+        "Y2K",
+        "Grunge",
+      ],
+      validate: {
+        validator: function (v) {
+          return v.length >= 5;
+        },
+        message: "You must select at least 5 styling interests.",
+      },
+    },
+  ],
 });
 //To securely store the password in database
 UserSchema.pre("save", async function (next) {
