@@ -54,7 +54,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     returnBase64: true,
   });
   if (!result) {
-    return next(new ErrorHandler("Error removing background", 500));
+    return next(new ErrorHandler("Error removing background", 800));
   }
   // const base64 = Buffer.from(await result.arrayBuffer()).toString("base64");
   const imgUrl = await uploadImage(result.base64Image);
