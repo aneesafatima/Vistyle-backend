@@ -1,11 +1,13 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
-const { removeBackground } = require("@imgly/background-removal-node");
+// const { removeBackground } = require("@imgly/background-removal-node");
+const { rembg } = require("@remove-background-ai/rembg.js");
 const { uploadImage } = require("../helpers/imageProcessing");
 const { resizeImage } = require("../helpers/imageProcessing");
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
+const { format } = require("path");
 
 const config = {
   debug: true, // enable or disable useful console.log outputs
@@ -44,13 +46,19 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!resizedImg) {
     return next(new ErrorHandler("Error resizing image", 500));
   }
-  const blob = new Blob([resizedImg], { type: "image/png" });
-  const result = await removeBackground(blob, config);
+  // const blob = new Blob([resizedImg], { type: "image/png" });
+  // const result = await removeBackground(blob, config);
+  const result = await rembg({
+    apiKey: process.env.REM_BG_API_KEY,
+    inputImage: resizedImg,
+    returnBase64: true,
+  });
   if (!result) {
     return next(new ErrorHandler("Error removing background", 500));
   }
-  const base64 = Buffer.from(await result.arrayBuffer()).toString("base64");
-  const imgUrl = await uploadImage(`data:image/png;base64,${base64}`);
+  // const base64 = Buffer.from(await result.arrayBuffer()).toString("base64");
+  const imgUrl = await uploadImage(result.base64Image);
+  // console.log(result.base64Image.slice(0, 25));
   res.status(201).json({
     status: "success",
     imgUrl,

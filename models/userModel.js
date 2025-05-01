@@ -62,6 +62,8 @@ const UserSchema = new mongoose.Schema(
         "The Iconic",
         "The Trendsetter",
         "The Vintage Soul",
+        "The Explorer",
+        "The Romantic",
       ],
       required: [true, "A user must have a design house"],
     },
