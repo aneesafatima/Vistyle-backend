@@ -42,7 +42,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  const resizedImg = await resizeImage(url, 200);
+  const resizedImg = await resizeImage(url, 800);
   if (!resizedImg) {
     return next(new ErrorHandler("Error resizing image", 500));
   }
@@ -54,7 +54,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     returnBase64: true,
   });
   if (!result) {
-    return next(new ErrorHandler("Error removing background", 800));
+    return next(new ErrorHandler("Error removing background", 500));
   }
   // const base64 = Buffer.from(await result.arrayBuffer()).toString("base64");
   const imgUrl = await uploadImage(result.base64Image);
