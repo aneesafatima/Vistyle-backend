@@ -34,7 +34,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("Error resizing image", 500));
   }
   const base64 = resizedImg.toString("base64");
-  const python = spawn("python", ["removeBg.py"]);
+  const python = spawn("python3", ["removeBg.py"]);
   let result = "";
   let errorOutput = "";
   python.stdin.write(base64);
