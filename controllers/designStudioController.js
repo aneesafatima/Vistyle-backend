@@ -29,19 +29,19 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  const resizedImg = await resizeImage(url, 800);
-  if (!resizedImg) {
-    return next(new ErrorHandler("Error resizing image", 500));
-  }
-  const base64 = resizedImg.toString("base64");
-  const python = spawn("python", ["removeBg.py"]);
-  let result = "";
+  await resizeImage(url, 800);
+  // if (!resizedImg) {
+  //   return next(new ErrorHandler("Error resizing image", 500));
+  // }
+  // const base64 = resizedImg.toString("base64");
+  const python = spawn("python", ["removeBg.py", "Output.png"]);
+  // let result = "";
   let errorOutput = "";
-  python.stdin.write(base64);
-  python.stdin.end();
-  python.stdout.on("data", (data) => {
-    result += data.toString();
-  });
+  // python.stdin.write(base64);
+  // python.stdin.end();
+  // python.stdout.on("data", (data) => {
+  //   result += data.toString();
+  // });
   python.stderr.on("data", (data) => {
     errorOutput += data.toString();
   });
@@ -50,15 +50,15 @@ exports.removeBg = catchAsync(async (req, res, next) => {
       console.error("Python script error:", errorOutput);
       return next(new ErrorHandler("Error removing background", 500));
     }
-    const imgUrl = await uploadImage(result);
-    if (!imgUrl) {
-      return next(new ErrorHandler("Error uploading image", 500));
-    }
+    // const imgUrl = await uploadImage(result);
+    // if (!imgUrl) {
+    //   return next(new ErrorHandler("Error uploading image", 500));
+    // }
     res.status(200).json({
       status: "success",
-      data: {
-        imgUrl,
-      },
+      // data: {
+      //   imgUrl,
+      // },
     });
   });
   // try {
