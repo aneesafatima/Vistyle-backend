@@ -34,8 +34,10 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   //   return next(new ErrorHandler("Error resizing image", 500));
   // }
   // const base64 = resizedImg.toString("base64");
+  console.log("Starting python script... after resize");
   const python = spawn("python", ["removeBg.py", "Output.png"]);
   // let result = "";
+  console.log("Python script started...");
   let errorOutput = "";
   // python.stdin.write(base64);
   // python.stdin.end();
@@ -46,8 +48,9 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     errorOutput += data.toString();
   });
   python.on("close", async (code) => {
+    console.log("Python script finished with code:", code);
     if (code !== 0 || errorOutput) {
-      console.error("Python script error:", errorOutput);
+      console.log("Python script error:", errorOutput);
       return next(new ErrorHandler("Error removing background", 500));
     }
     // const imgUrl = await uploadImage(result);
