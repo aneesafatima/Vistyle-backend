@@ -47,6 +47,9 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   python.stderr.on("data", (data) => {
     errorOutput += data.toString();
   });
+  python.stdout.on("data", (data) => {
+    console.log("Python script output:", data.toString());
+  });
   python.on("close", async (code) => {
     console.log("Python script finished with code:", code);
     if (code !== 0 || errorOutput) {
