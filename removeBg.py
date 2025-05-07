@@ -1,4 +1,3 @@
-import base64
 from rembg import remove
 import sys
 
@@ -15,6 +14,8 @@ def remove_background(image):
             with open(image, 'wb') as output_file:
                  output_file.write(output_image)
     except Exception as e:
+        sys.stderr.write(f"Error: {e}")
+        sys.exit(1)
         print(f"Error: {e}")
   
     # Encode the output image to base64
@@ -29,4 +30,5 @@ if( __name__ == "__main__"):
     # result = remove_background(base64_image)
     print(sys.argv[1])
     remove_background(sys.argv[1])
+    sys.exit(0)
     
