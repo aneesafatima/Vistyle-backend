@@ -1,28 +1,37 @@
-from rembg import remove
 import sys
 
-print("Script started")
-print("Received path:", sys.argv[1])
+print("Before rembg import")
+
+try:
+    from rembg import remove
+    print("rembg imported successfully")
+    sys.exit(0)
+except Exception as e:
+    print(f"Error importing rembg: {e}", file=sys.stderr)
+    sys.exit(1)
+
+# print("Script started")
+# print("Received path:", sys.argv[1])
 
 
-def remove_background(image):
-    # Decode the base64 image
-    # image_data = base64.b64decode(base64_image)
-    print("In rembg function")
-    try:
-        with open(image, 'rb') as image_file:
-            image_data = image_file.read()
-            print("Data converted to bytes")
-            # Remove the background
-            output_image = remove(image_data)
-            with open(image, 'wb') as output_file:
-                 output_file.write(output_image)
-    except Exception as e:
-        sys.stderr.write(f"Error: {e}")
-        print(f"Error: {e}")
-        sys.exit(1)
+# def remove_background(image):
+#     # Decode the base64 image
+#     # image_data = base64.b64decode(base64_image)
+#     print("In rembg function")
+#     try:
+#         with open(image, 'rb') as image_file:
+#             image_data = image_file.read()
+#             print("Data converted to bytes")
+#             # Remove the background
+#             output_image = remove(image_data)
+#             with open(image, 'wb') as output_file:
+#                  output_file.write(output_image)
+#     except Exception as e:
+#         sys.stderr.write(f"Error: {e}")
+#         print(f"Error: {e}")
+#         sys.exit(1)
 
-remove_background(sys.argv[1])
+# remove_background(sys.argv[1])
 sys.exit(0)
 
   
