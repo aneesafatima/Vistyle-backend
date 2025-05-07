@@ -32,7 +32,7 @@ except Exception as e:
 #         sys.exit(1)
 
 # remove_background(sys.argv[1])
-sys.exit(0)
+# sys.exit(0)
 
   
 #     # Encode the output image to base64
