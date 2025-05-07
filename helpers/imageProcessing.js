@@ -5,12 +5,12 @@ const fs = require("fs");
 const path = require( "path" );
 exports.resizeImage = async function (image, width) {
   try {
-    const tempDir = path.join(__dirname, "../temp");
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir);
-      console.log("Created temp directory:", tempDir);
-    }
-    const tempFilePath = path.join(tempDir, `Output.png`);
+    // const tempDir = path.join(__dirname, "../temp");
+    // if (!fs.existsSync(tempDir)) {
+    //   fs.mkdirSync(tempDir);
+    //   console.log("Created temp directory:", tempDir);
+    // }
+    const tempFilePath = path.join('/tmp', `Output.png`);
     console.log("Resizing image to width:", width);
     const response = await axios.get(image, { responseType: "arraybuffer" });
     await sharp(response.data).resize(width).toFile(tempFilePath);
