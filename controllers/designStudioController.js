@@ -29,13 +29,13 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  await resizeImage(url, 800);
+ const filePath =  await resizeImage(url, 800);
   // if (!resizedImg) {
   //   return next(new ErrorHandler("Error resizing image", 500));
   // }
   // const base64 = resizedImg.toString("base64");
   console.log("Starting python script... after resize");
-  const python = spawn("python", ["removeBg.py", "Output.png"]);
+  const python = spawn("python", ["removeBg.py", filePath]);
   // let result = "";
   console.log("Python script started...");
   let errorOutput = "";

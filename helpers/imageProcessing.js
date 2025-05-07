@@ -15,6 +15,8 @@ exports.resizeImage = async function (image, width) {
     const response = await axios.get(image, { responseType: "arraybuffer" });
     await sharp(response.data).resize(width).toFile(tempFilePath);
     console.log("Image resized successfully:");
+    console.error("Resized image path:", tempFilePath);
+    return tempFilePath;
   } catch (err) {
     console.error("Error resizing image:", err);
     throw err;

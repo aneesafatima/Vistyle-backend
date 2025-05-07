@@ -27,5 +27,6 @@ if( __name__ == "__main__"):
     
     # Remove the background and get the result
     # result = remove_background(base64_image)
-    remove_background('./temp/' + sys.argv[1])
+    print(sys.argv[1])
+    remove_background(sys.argv[1])
     
