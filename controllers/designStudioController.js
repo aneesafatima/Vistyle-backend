@@ -7,7 +7,7 @@ const { resizeImage } = require("../helpers/imageProcessing");
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
-
+const path = require("path");
 exports.createItemMask = catchAsync(async (req, res, next) => {
   const imgURL = req.query.imgURL;
   try {
@@ -30,12 +30,13 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("Image URL not found", 404));
   }
  const filePath =  await resizeImage(url, 800);
+ const outputPath = path.join(__dirname, "../tmp", "Output-2.png");
   // if (!resizedImg) {
   //   return next(new ErrorHandler("Error resizing image", 500));
   // }
   // const base64 = resizedImg.toString("base64");
   console.log("Starting python script... after resize");
-  const python = spawn("python", ["removeBg.py", filePath]);
+  const python = spawn("rembg", ["i", filePath, outputPath]);
   // let result = "";
   console.log("Python script started...");
   let errorOutput = "";
@@ -47,9 +48,9 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   python.stderr.on("data", (data) => {
     errorOutput += data.toString();
   });
-  python.stdout.on("data", (data) => {
-    console.log("Python script output:", data.toString());
-  });
+  // python.stdout.on("data", (data) => {
+  //   console.log("Python script output:", data.toString());
+  // });
   python.on("close", async (code) => {
     console.log("Python script finished with code:", code);
     if (code !== 0 || errorOutput) {

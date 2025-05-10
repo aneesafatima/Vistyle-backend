@@ -10,6 +10,17 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "A user must have a name"],
     },
+    username: {
+      type: String,
+      required: [true, "A user must have a username"],
+      unique: true,
+      validate: {
+        validator: function (value) {
+          return /^[a-zA-Z0-9_]{2,}$/.test(value);
+        },
+        message: "Invalid username",
+      },
+    },
     email: {
       type: String,
       unique: true,
