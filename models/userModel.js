@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "A user must have a name"],
-    },
+    }, //this
     username: {
       type: String,
       required: [true, "A user must have a username"],
@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
         message: "Invalid username",
       },
     },
+    description: {
+      type: String,
+      default: "I am a fashion enthusiast",
+    },//this
     email: {
       type: String,
       unique: true,
@@ -32,7 +36,7 @@ const UserSchema = new mongoose.Schema(
       required: [true, "A user must have a password"],
       minLength: 8,
       select: false,
-    },
+    },//this
     passwordConfirm: {
       type: String,
       required: [true, "A user must confirm their password"],
@@ -43,7 +47,7 @@ const UserSchema = new mongoose.Schema(
         message: "Passwords do not match",
       },
       select: false,
-    },
+    }, //this
     photo: {
       type: String,
       default: "default-user",
@@ -55,11 +59,6 @@ const UserSchema = new mongoose.Schema(
       select: false,
     },
     items: [
-      {
-        type: String,
-      },
-    ],
-    interests: [
       {
         type: String,
       },
@@ -77,7 +76,7 @@ const UserSchema = new mongoose.Schema(
         "The Romantic",
       ],
       required: [true, "A user must have a design house"],
-    },
+    },//this
     interests: {
       type: [String],
       enum: [
@@ -134,12 +133,11 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-//To check if the password is correct (when a person logs in)
+
 UserSchema.methods.comparePasswords = async function (
   userPassword,
-  hashedPassword
 ) {
-  return await bcryptjs.compare(userPassword, hashedPassword);
+  return await bcryptjs.compare(userPassword, this.password);
 };
 
 //To check if the password was changed after the token was issued
