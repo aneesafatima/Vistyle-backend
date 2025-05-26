@@ -38,6 +38,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
   res.status(200).json({
     status: "success",
-    data: user,
   });
 });

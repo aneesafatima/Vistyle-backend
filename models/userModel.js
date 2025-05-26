@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema(
     description: {
       type: String,
       default: "I am a fashion enthusiast",
-    },//this
+    }, //this
     email: {
       type: String,
       unique: true,
@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema(
       required: [true, "A user must have a password"],
       minLength: 8,
       select: false,
-    },//this
+    }, //this
     passwordConfirm: {
       type: String,
       required: [true, "A user must confirm their password"],
@@ -76,7 +76,7 @@ const UserSchema = new mongoose.Schema(
         "The Romantic",
       ],
       required: [true, "A user must have a design house"],
-    },//this
+    }, //this
     interests: {
       type: [String],
       enum: [
@@ -108,7 +108,14 @@ const UserSchema = new mongoose.Schema(
     },
   },
   {
-    toJSON: { virtuals: true },
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret.password;
+        delete ret.otpsecret;
+        return ret;
+      },
+    },
     toObject: { virtuals: true },
   }
 );
@@ -133,22 +140,9 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-
-UserSchema.methods.comparePasswords = async function (
-  userPassword,
-) {
+UserSchema.methods.comparePasswords = async function (userPassword) {
   return await bcryptjs.compare(userPassword, this.password);
 };
-
-//To check if the password was changed after the token was issued
-// UserSchema.methods.passwordChangedAfter = function (jwtTimeStamp) {
-//   if (this.passwordChangedAt) {
-//     const passwordTime = this.passwordChangedAt.getTime();
-//     console.log(passwordTime / 1000);
-//     return passwordTime / 1000 > jwtTimeStamp;
-//   }
-//   return false;
-// };
 
 const User = new mongoose.model("User", UserSchema);
 
