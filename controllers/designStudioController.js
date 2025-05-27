@@ -1,6 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
-const { spawn } = require("child_process");
+const spawn = require("child_process").spawn;
 // const { rembg } = require("@remove-background-ai/rembg.js");
 const { uploadImage } = require("../helpers/imageProcessing");
 const { resizeImage } = require("../helpers/imageProcessing");
@@ -29,28 +29,24 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
- const filePath =  await resizeImage(url, 800);
- const outputPath = path.join(__dirname, "../tmp", "Output-2.png");
+  const filePath = await resizeImage(url, 800);
+  const outputPath = path.join(__dirname, "../tmp", `output_${Date.now()}.png`);
   // if (!resizedImg) {
   //   return next(new ErrorHandler("Error resizing image", 500));
   // }
   // const base64 = resizedImg.toString("base64");
   console.log("Starting python script... after resize");
-  const python = spawn("rembg", ["i", filePath, outputPath]);
+  const python = spawn("python", ["./removeBg.py", filePath, outputPath]);
+
   // let result = "";
   console.log("Python script started...");
   let errorOutput = "";
-  // python.stdin.write(base64);
-  // python.stdin.end();
-  // python.stdout.on("data", (data) => {
-  //   result += data.toString();
-  // });
+   python.stdout.on("data", (data) => {
+    console.log("Python script output:", data.toString());
+   })
   python.stderr.on("data", (data) => {
     errorOutput += data.toString();
   });
-  // python.stdout.on("data", (data) => {
-  //   console.log("Python script output:", data.toString());
-  // });
   python.on("close", async (code) => {
     console.log("Python script finished with code:", code);
     if (code !== 0 || errorOutput) {

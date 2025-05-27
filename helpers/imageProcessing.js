@@ -6,10 +6,6 @@ const path = require( "path" );
 exports.resizeImage = async function (image, width) {
   try {
     const tempDir = path.join(__dirname, "../tmp");
-    // if (!fs.existsSync(tempDir)) {
-    //   fs.mkdirSync(tempDir);
-    //   console.log("Created temp directory:", tempDir);
-    // }
     const tempFilePath = path.join(tempDir, `Output.png`);
     console.log("Resizing image to width:", width);
     const response = await axios.get(image, { responseType: "arraybuffer" });
