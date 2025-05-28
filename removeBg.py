@@ -1,6 +1,7 @@
 import sys          # For command line arguments and exit codes
 import os           # For file system operations (checking if files exist)
 from rembg import remove  # The AI model that removes backgrounds
+exit(0)
 
 def remove_background(input_path, output_path):
     # Print what we're doing (helpful for debugging)
