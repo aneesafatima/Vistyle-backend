@@ -35,7 +35,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
 
   console.log("Starting python script... after resize");
   exec(
-    `python removeBg.py ${filePath} ${outputPath}`,
+    `python3 removeBg.py ${filePath} ${outputPath}`,
     (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing Python script: ${error.message}`);
