@@ -45,33 +45,12 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   }
   const fileUrl = pathToFileURL(filePath).href;
   try {
-    const blob = await removeBackground(fileUrl);
-    const buffer = Buffer.from(await blob.arrayBuffer());
-
-    // Upload the buffer to Cloudinary using a stream
-    const streamUpload = () => {
-      return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          {
-            folder: "vistyl",
-            public_id: `output_${Date.now()}`,
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-          }
-        );
-
-        streamifier.createReadStream(buffer).pipe(stream);
-      });
-    };
-
-    const cloudinaryResult = await streamUpload();
+    await removeBackground(fileUrl, {
+      model: "small",
+    });
 
     res.status(200).json({
       status: "success",
-      imageUrl: cloudinaryResult.secure_url,
     });
   } catch (error) {
     console.error("Error during background removal or upload:", error);
