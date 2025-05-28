@@ -1,6 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { removeBackground } = require("@imgly/background-removal-node");
+const { exec } = require("child_process");
 
 const { uploadImage } = require("../helpers/imageProcessing");
 const { pathToFileURL } = require("url");
@@ -37,45 +38,34 @@ exports.removeBg = catchAsync(async (req, res, next) => {
   if (!url) {
     return next(new ErrorHandler("Image URL not found", 404));
   }
-  const filePath = await resizeImage(url, 800);
-  // const outputPath = path.join(__dirname, "../tmp", `output_${Date.now()}.png`);
+  const filePath = await resizeImage(url, 200);
+  const outputPath = path.join(__dirname, "../tmp", `output_${Date.now()}.png`);
   console.log("Resized image path:", filePath);
   if (!filePath) {
     return next(new ErrorHandler("Error resizing image", 500));
   }
-  const fileUrl = pathToFileURL(filePath).href;
-  try {
-    await removeBackground(fileUrl, {
-      model: "small",
-    });
 
-    res.status(200).json({
-      status: "success",
-    });
-  } catch (error) {
-    console.error("Error during background removal or upload:", error);
-    return next(new ErrorHandler("Error removing background", 500));
-  }
+  exec(
+    `python removeBg.py ${filePath} ${outputPath}`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing Python script: ${error.message}`);
+        if (stderr) {
+          console.error(`Python script stderr: ${stderr}`);
+        }
+        return next(new ErrorHandler("Error removing background", 500));
+      }
+      if (stdout) {
+        console.log(`Python script output: ${stdout}`);
+      }
+      console.log("Python script finished successfully.");
+      res.status(200).json({
+        status: "success",
+      });
+    }
+  );
 
-  // exec(
-  //   `python3 removeBg.py ${filePath} ${outputPath}`,
-  //   (error, stdout, stderr) => {
-  //     if (error) {
-  //       console.error(`Error executing Python script: ${error.message}`);
-  //       if (stderr) {
-  //         console.error(`Python script stderr: ${stderr}`);
-  //       }
-  //       return next(new ErrorHandler("Error removing background", 500));
-  //     }
-  //     if (stdout) {
-  //       console.log(`Python script output: ${stdout}`);
-  //     }
-  //     console.log("Python script finished successfully.");
-  //     res.status(200).json({
-  //       status: "success",
-  //     });
-  //   }
-  // );
+
 });
 
 // exports.removeBg = catchAsync(async (req, res, next) => {
