@@ -1,15 +1,21 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { removeBackground } = require("@imgly/background-removal-node");
-const { exec } = require("node:child_process");
+
 const { uploadImage } = require("../helpers/imageProcessing");
 const { pathToFileURL } = require("url");
 const { resizeImage } = require("../helpers/imageProcessing");
-const fs = require("fs");
+const streamifier = require("streamifier");
+const cloudinary = require("cloudinary").v2;
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
 const path = require("path");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_API_CLOUDNAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 exports.createItemMask = catchAsync(async (req, res, next) => {
   const imgURL = req.query.imgURL;
   try {
@@ -32,25 +38,45 @@ exports.removeBg = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("Image URL not found", 404));
   }
   const filePath = await resizeImage(url, 800);
-  const outputPath = path.join(__dirname, "../tmp", `output_${Date.now()}.png`);
+  // const outputPath = path.join(__dirname, "../tmp", `output_${Date.now()}.png`);
   console.log("Resized image path:", filePath);
   if (!filePath) {
     return next(new ErrorHandler("Error resizing image", 500));
   }
   const fileUrl = pathToFileURL(filePath).href;
   try {
-    removeBackground(fileUrl).then(async (blob) => {
-      const buffer = Buffer.from(await blob.arrayBuffer());
-      fs.writeFileSync(outputPath, buffer);
-    });
+    const blob = await removeBackground(fileUrl);
+    const buffer = Buffer.from(await blob.arrayBuffer());
+
+    // Upload the buffer to Cloudinary using a stream
+    const streamUpload = () => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "vistyl",
+            public_id: `output_${Date.now()}`,
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        streamifier.createReadStream(buffer).pipe(stream);
+      });
+    };
+
+    const cloudinaryResult = await streamUpload();
+
     res.status(200).json({
       status: "success",
+      imageUrl: cloudinaryResult.secure_url,
     });
   } catch (error) {
-    console.error("Error removing background:", error);
+    console.error("Error during background removal or upload:", error);
     return next(new ErrorHandler("Error removing background", 500));
   }
-
 
   // exec(
   //   `python3 removeBg.py ${filePath} ${outputPath}`,
