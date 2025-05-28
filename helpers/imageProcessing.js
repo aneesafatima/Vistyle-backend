@@ -2,7 +2,7 @@ const cloudinary = require("cloudinary").v2;
 const axios = require("axios");
 const sharp = require("sharp");
 const fs = require("fs");
-const path = require( "path" );
+const path = require("path");
 exports.resizeImage = async function (image, width) {
   try {
     const tempDir = path.join(__dirname, "../tmp");
@@ -26,10 +26,13 @@ cloudinary.config({
 exports.uploadImage = async (base64) => {
   try {
     console.log("Uploading image to Cloudinary...");
-    const result = await cloudinary.uploader.upload(`data:image/png;base64,${base64}`, {
-      public_id: "test-img2",
-      folder: "vistyl",
-    });
+    const result = await cloudinary.uploader.upload(
+      `data:image/png;base64,${base64}`,
+      {
+        public_id: "test-img2",
+        folder: "vistyl",
+      }
+    );
     console.log("Image uploaded successfully to Cloudinary.");
     return result.secure_url;
   } catch (err) {
