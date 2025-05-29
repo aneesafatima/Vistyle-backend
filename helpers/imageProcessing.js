@@ -37,7 +37,7 @@ exports.imageModification = async function (image, width) {
 
     const res = await axios({
       method: "post",
-      url: "https://api.withoutbg.com/v1.0/image-without-background-base64",
+      url: process.env.REM_BG_API_URL,
       headers: {
         "X-API-Key": process.env.REM_BG_API_KEY,
         "Content-Type": "application/json",
