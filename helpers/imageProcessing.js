@@ -29,15 +29,16 @@ const uploadImage = async (base64) => {
 exports.imageModification = async function (image, width) {
   try {
     console.log("Resizing image to width:", width);
-    const response = await axios.get(image, { responseType: "arraybuffer" });
+    const response = await axios.get(image.trim(), {
+      responseType: "arraybuffer",
+    });
     const bufferData = await sharp(response.data)
       .resize(width)
       .png()
       .toBuffer();
-
     const res = await axios({
       method: "post",
-      url: process.env.REM_BG_API_URL,
+      url: process.env.REM_BG_API,
       headers: {
         "X-API-Key": process.env.REM_BG_API_KEY,
         "Content-Type": "application/json",
@@ -48,8 +49,9 @@ exports.imageModification = async function (image, width) {
     });
 
     return await uploadImage(res.data.img_without_background_base64);
+    // return "done";
   } catch (err) {
-    console.error("Error resizing image:", err);
+    console.error("Error processing image:", err);
     throw err;
   }
 };

@@ -5,6 +5,7 @@ const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
 const path = require("path");
+const User = require("../models/userModel");
 
 exports.createItemMask = catchAsync(async (req, res, next) => {
   const imgURL = req.query.imgURL;
@@ -34,14 +35,44 @@ exports.removeBg = catchAsync(async (req, res, next) => {
       imgURL: uploadedUrl,
     },
   });
-
-
 });
 
-// const result = await rembg({
-//   apiKey: process.env.REM_BG_API_KEY,
-//   inputImage: resizedImg,
-//   returnBase64: true,
-// });
-// if (!result) return next(new ErrorHandler("Error removing background", 500));
-// });
+exports.createSticker = catchAsync(async (req, res, next) => {
+  const { url, price, category, position, email } = req.body;
+  console.log(req.body);
+  if (!url || !price || !category || !position || !email)
+    return next(new ErrorHandler("Invalid Data", 400));
+  if (!email) return next(new ErrorHandler("Email is required", 400));
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(
+      new ErrorHandler("User not found. Please register first.", 404)
+    );
+  }
+  try {
+    if (user.stickers?.length >= 10) {
+      return next(
+        new ErrorHandler(
+          "You have exceeded the limit of 10 stickers as a test user. Thank you for using the MVP. Please give necessary feedback in the feedback forum on the home screen.",
+          400
+        )
+      );
+    }
+    const uploadedUrl = await imageModification(url, 200);
+    if (!user.stickers) {
+      user.stickers = [];
+    } //remove this line later for newly created users
+    user.stickers.push({
+      url: uploadedUrl,
+      price,
+      category,
+      position,
+    });
+    await user.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error, 500));
+  }
+});

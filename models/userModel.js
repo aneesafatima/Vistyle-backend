@@ -47,22 +47,42 @@ const UserSchema = new mongoose.Schema(
         message: "Passwords do not match",
       },
       select: false,
-    }, //this
+    },
     photo: {
       type: String,
       default: "default-user",
     },
+
     passwordChangedAt: Date,
     active: Boolean,
     otpsecret: {
       type: String,
       select: false,
     },
-    items: [
-      {
-        type: String,
-      },
-    ],
+    stickers: {
+      type: [
+        {
+          category: {
+            type: String,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: true,
+            min: 0,
+          },
+          url: {
+            type: String,
+            required: true,
+          },
+          position: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+      default: [],
+    },
     designHouse: {
       type: String,
       enum: [
@@ -107,6 +127,7 @@ const UserSchema = new mongoose.Schema(
       },
     },
   },
+
   {
     toJSON: {
       virtuals: true,
