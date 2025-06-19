@@ -8,9 +8,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadImage = async (base64) => {
+const uploadImage = async (base64, userId) => {
   try {
     console.log("Uploading image to Cloudinary...");
+    const uniqueId = `${userId}_${Date.now()}`; // or use a UUID if available
     const result = await cloudinary.uploader.upload(
       `data:image/png;base64,${base64}`,
       {
@@ -26,7 +27,7 @@ const uploadImage = async (base64) => {
   }
 };
 
-exports.imageModification = async function (image, width) {
+exports.imageModification = async function (image, width, userId) {
   try {
     console.log("Resizing image to width:", width);
     const response = await axios.get(image.trim(), {
@@ -48,8 +49,7 @@ exports.imageModification = async function (image, width) {
       },
     });
 
-    return await uploadImage(res.data.img_without_background_base64);
-    // return "done";
+    return await uploadImage(res.data.img_without_background_base64,userId);
   } catch (err) {
     console.error("Error processing image:", err);
     throw err;

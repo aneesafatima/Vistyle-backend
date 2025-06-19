@@ -4,7 +4,6 @@ const { imageModification } = require("../helpers/imageProcessing");
 const {
   processImageWithHuggingFace,
 } = require("../huggingface/segformer_b2_clothes");
-const path = require("path");
 const User = require("../models/userModel");
 
 exports.createItemMask = catchAsync(async (req, res, next) => {
@@ -58,7 +57,7 @@ exports.createSticker = catchAsync(async (req, res, next) => {
         )
       );
     }
-    const uploadedUrl = await imageModification(url, 200);
+    const uploadedUrl = await imageModification(url, 200, user._id.toString());
     if (!user.stickers) {
       user.stickers = [];
     } //remove this line later for newly created users
@@ -71,6 +70,7 @@ exports.createSticker = catchAsync(async (req, res, next) => {
     await user.save();
     res.status(200).json({
       status: "success",
+      stickers: user.stickers,
     });
   } catch (error) {
     next(new ErrorHandler(error, 500));

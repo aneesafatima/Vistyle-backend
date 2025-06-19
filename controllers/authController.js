@@ -28,6 +28,10 @@ exports.signUp = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    username: req.body.username,
+    description: req.body.description,
+    interests: req.body.interests,
+    designHouse: req.body.designHouse,
   });
   const obj = new Email(user);
   obj.sendWelcome(user);
