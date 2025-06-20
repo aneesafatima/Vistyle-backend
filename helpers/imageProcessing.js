@@ -15,7 +15,7 @@ const uploadImage = async (base64, userId) => {
     const result = await cloudinary.uploader.upload(
       `data:image/png;base64,${base64}`,
       {
-        public_id: "test-img2",
+        public_id: uniqueId,
         folder: "vistyl",
       }
     );
