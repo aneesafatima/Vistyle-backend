@@ -82,7 +82,7 @@ const UserSchema = new mongoose.Schema(
           code: {
             type: String,
             required: true,
-          }
+          },
         },
       ],
       default: [],
@@ -129,6 +129,34 @@ const UserSchema = new mongoose.Schema(
         },
         message: "You must select at least 5 styling interests.",
       },
+    },
+    cart: {
+      type: [
+        {
+          url: {
+            type: String,
+            required: true,
+          },
+          code: {
+            type: String,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: true,
+            min: 0,
+          },
+          title: {
+            type: String,
+            required: true,
+          },
+          size: {
+            type: [String],
+            required: true,
+          },
+        },
+      ],
+      default: [],
     },
   },
 
