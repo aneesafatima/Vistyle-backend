@@ -1,6 +1,7 @@
 const ErrorHandler = require("../utils/ErrorHandler");
 const axios = require("axios");
 const catchAsync = require("../utils/catchAsync");
+const User = require("../models/userModel");
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   const { store } = req.query;
 
@@ -28,4 +29,28 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   }
 });
 
-
+exports.addItemToCart = catchAsync(async (req, res, next) => {
+  const { code, size, price, title, url, email } = req.query;
+  if (!code || !size || !price || !title || !url || !email) {
+    return next(new ErrorHandler("Missing required query parameters", 400));
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  const existingItem = user.cart.find((item) => item.code === code);
+  if (!existingItem) {
+    user.cart.push({
+      code,
+      size,
+      price,
+      title,
+      url,
+    });
+    await user.save();
+  }
+  res.status(200).json({
+    status: "success",
+    message: `Product ${code} added to cart from store H&M`,
+  });
+});
