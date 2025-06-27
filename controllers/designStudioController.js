@@ -77,3 +77,31 @@ exports.createSticker = catchAsync(async (req, res, next) => {
     next(new ErrorHandler(error, 500));
   }
 });
+
+exports.deleteStickerbyId = catchAsync(async (req, res, next) => {
+  const { stickerId, email } = req.body;
+  console.log(req.body);
+  // Validate input
+  if (!stickerId || !email) {
+    return next(new ErrorHandler("Sticker ID and email are required", 400));
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  const stickerIndex = user.stickers.findIndex(
+    (sticker) => sticker.id === stickerId
+  );
+
+  if (stickerIndex === -1) {
+    return next(new ErrorHandler("Sticker not found", 404));
+  }
+  user.stickers.splice(stickerIndex, 1);
+  await user.save();
+  res.status(200).json({
+    status: "success",
+    message: "Sticker deleted successfully",
+    stickers: user.stickers,
+  });
+});
+
