@@ -46,7 +46,7 @@ exports.addItemToCart = catchAsync(async (req, res, next) => {
       price,
       title,
       url,
-    });
+    }); 
     await user.save();
   }
   res.status(200).json({
@@ -54,3 +54,24 @@ exports.addItemToCart = catchAsync(async (req, res, next) => {
     message: `Product ${code} added to cart from store H&M`,
   });
 });
+
+exports.deleteFromCart = catchAsync(async (req, res, next) => {
+  const { code, email } = req.body;
+  if (!code || !email) {
+    return next(new ErrorHandler("Missing required query parameters", 400));
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  const existingItemIndex = user.cart.findIndex((item) => item.code === code);
+  if (existingItemIndex === -1) {
+    return next(new ErrorHandler("Item not found in cart", 404));
+  }
+  user.cart.splice(existingItemIndex, 1);
+  await user.save();   
+  res.status(200).json({
+    status: "success",
+    message: `Product ${code} deleted from cart`,
+  }); 
+})
