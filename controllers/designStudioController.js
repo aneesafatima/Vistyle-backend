@@ -57,7 +57,7 @@ exports.createSticker = catchAsync(async (req, res, next) => {
         )
       );
     }
-    const uploadedUrl = await imageModification(url, 200, user._id.toString());
+    const uploadedUrl = await imageModification(url, 500, user._id.toString());
     if (!user.stickers) {
       user.stickers = [];
     } //remove this line later for newly created users
