@@ -37,7 +37,7 @@ exports.removeBg = catchAsync(async (req, res, next) => {
 });
 
 exports.createSticker = catchAsync(async (req, res, next) => {
-  const { url, price, category, position, email,code } = req.body;
+  const { url, price, category, position, email, code } = req.body;
   console.log(req.body);
   if (!url || !price || !category || !position || !email || !code)
     return next(new ErrorHandler("Invalid Data", 400));
@@ -66,7 +66,7 @@ exports.createSticker = catchAsync(async (req, res, next) => {
       price,
       category,
       position,
-      code
+      code,
     });
     await user.save();
     res.status(200).json({
@@ -105,3 +105,22 @@ exports.deleteStickerbyId = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteCategory = catchAsync(async (req, res, next) => {
+  const { category, email } = req.body;
+  if (!category || !email) {
+    return next(new ErrorHandler("Category and email are required", 400));
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  user.stickers = user.stickers.filter(
+    (sticker) => sticker.category !== category
+  );
+  await user.save();
+  res.status(200).json({
+    status: "success",
+    message: "Category deleted successfully",
+    stickers: user.stickers,
+  });
+});
