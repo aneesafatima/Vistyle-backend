@@ -79,7 +79,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    user: currentUser
+    user: currentUser,
   });
 });
 
@@ -101,7 +101,7 @@ exports.forgotPassword = async (req, res, next) => {
     );
   const user = await User.findOne({ email }).select("+otpsecret");
   if (!user)
-    return next(new ErrorHandler("There is no User with this ID", 404));
+    return next(new ErrorHandler("There is no User with this email", 404));
   const otp = speakeasy.totp({
     secret: user.otpsecret,
     encoding: "base32",
@@ -139,7 +139,7 @@ exports.checkOTP = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
-  console.log("In reset password")
+  console.log("In reset password");
   const { password, passwordConfirm, email } = req.body;
   if (!password || !passwordConfirm)
     return next(
@@ -152,4 +152,32 @@ exports.resetPassword = async (req, res, next) => {
   user.passwordConfirm = passwordConfirm;
   await user.save();
   sendToken(user, 200, res);
+};
+
+exports.checkAvailability = async (req, res, next) => {
+  const { email, username } = req.body;
+  if (!email && !username)
+    return next(new ErrorHandler("Please provide email or username", 400));
+
+  let user;
+  user = await User.findOne({ email });
+  if (user) {
+    return res.status(400).json({
+      status: "error",
+      type: "email",
+      message: "Email is already taken",
+    });
+  }
+  user = await User.findOne({ username });
+  if (user) {
+    return res.status(400).json({
+      status: "error",
+      type: "username",
+      message: "Username is already taken",
+    });
+  }
+  res.status(200).json({
+    status: "success",
+    message: "Email and Username are available",
+  });
 };
