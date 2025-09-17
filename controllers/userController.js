@@ -40,3 +40,4 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     status: "success",
   });
 });
+

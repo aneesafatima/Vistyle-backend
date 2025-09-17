@@ -31,7 +31,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 
 exports.addItemToCart = catchAsync(async (req, res, next) => {
   const { code, size, price, title, url, email } = req.body;
-  if (!code || !size || !price || !title || !url || !email) {
+  if (!code || !size || !price || !title || !url || !email || !img) {
     return next(new ErrorHandler("Missing required query parameters", 400));
   }
   const user = await User.findOne({ email });
@@ -46,12 +46,13 @@ exports.addItemToCart = catchAsync(async (req, res, next) => {
       price,
       title,
       url,
+      img
     }); 
     await user.save();
   }
   res.status(200).json({
     status: "success",
-    message: `Product ${code} added to cart from store H&M`,
+    cart: user.cart[user.cart.length - 1]
   });
 });
 
