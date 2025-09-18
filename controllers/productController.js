@@ -30,7 +30,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 });
 
 exports.addItemToCart = catchAsync(async (req, res, next) => {
-  const { code, size, price, title, url, email } = req.body;
+  const { code, size, price, title, url, email, img } = req.body;
   if (!code || !size || !price || !title || !url || !email || !img) {
     return next(new ErrorHandler("Missing required query parameters", 400));
   }

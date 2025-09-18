@@ -125,9 +125,9 @@ const UserSchema = new mongoose.Schema(
       ],
       validate: {
         validator: function (v) {
-          return v.length >= 5;
+          return v.length >= 3;
         },
-        message: "You must select at least 5 styling interests.",
+        message: "You must select at least 3 styling interests.",
       },
     },
     cart: {
