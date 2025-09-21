@@ -1,5 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const ErrorHandler = require("../utils/ErrorHandler");
+
 const { imageModification } = require("../helpers/imageProcessing");
 const {
   processImageWithHuggingFace,
@@ -58,6 +59,7 @@ exports.createSticker = catchAsync(async (req, res, next) => {
       );
     }
     const uploadedUrl = await imageModification(url, 500, user._id.toString());
+    console.log(uploadedUrl);
     if (!user.stickers) {
       user.stickers = [];
     } //remove this line later for newly created users
