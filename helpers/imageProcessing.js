@@ -41,21 +41,9 @@ exports.imageModification = async function (image, width, userId) {
     });
 
     const uploadedUrl = await uploadImage(output.base64Image, userId);
-    return uploadedUrl; // now returns actual URL
+    return uploadedUrl; 
   } catch (err) {
     console.error("Error processing image:", err);
     throw err;
   }
 };
-
-// const res = await axios({
-//   method: "post",
-//   url: process.env.REM_BG_API,
-//   headers: {
-//     "X-API-Key": process.env.REM_BG_API_KEY,
-//     "Content-Type": "application/json",
-//   },
-//   data: {
-//     image_base64: bufferData.toString("base64"),
-//   },
-// });
